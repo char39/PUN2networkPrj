@@ -14,15 +14,6 @@ public class PlayerMovement : MonoBehaviour
     private readonly string hashMove = "Move";
     #endregion
 
-    // public float time;
-    // public float deltaTime;
-    // public float fixedDeltaTime;
-    // public float smoothDeltaTime;
-    // time = Time.time;
-    // deltaTime = Time.deltaTime;
-    // fixedDeltaTime = Time.fixedDeltaTime;
-    // smoothDeltaTime = Time.smoothDeltaTime;
-
     void Start()
     {
         playerInput = GetComponent<PlayerInput>();

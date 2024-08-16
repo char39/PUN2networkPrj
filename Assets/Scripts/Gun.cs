@@ -27,6 +27,7 @@ public class Gun : MonoBehaviour
     {
         gunAudioPlayer = GetComponent<AudioSource>();
         lineRenderer = GetComponent<LineRenderer>();
+        fireTr = transform.GetChild(3).transform;
         lineRenderer.positionCount = 2;
         lineRenderer.enabled = false;
     }
@@ -93,11 +94,11 @@ public class Gun : MonoBehaviour
         state = State.Reloading;
         gunAudioPlayer.PlayOneShot(reloadClip);
         yield return new WaitForSeconds(reloadTime);
-        int ammoToFill = magCapacity - magAmmo;                     // 채워야 할 탄약 개수                 ex) 25 - 15 = 10
-        if (ammoRemain < ammoToFill)                                // 남은 탄약이 채워야 할 탄약보다 적을 때   ex) 5 < 10
-            ammoToFill = ammoRemain;                                    // 남은 탄약만큼만 채움             ex) 5
-        magAmmo += ammoToFill;                                      // 탄창 채움                         ex) 15 + 5 = 20
-        ammoRemain -= ammoToFill;                                   // 남은 탄약에서 채운 탄약만큼 뺌         ex) 5 - 5 = 0
+        int ammoToFill = magCapacity - magAmmo;             // 채워야 할 탄약 개수                 ex) 25 - 15 = 10
+        if (ammoRemain < ammoToFill)                        // 남은 탄약이 채워야 할 탄약보다 적을 때   ex) 5 < 10
+            ammoToFill = ammoRemain;                            // 남은 탄약만큼만 채움             ex) 5
+        magAmmo += ammoToFill;                              // 탄창 채움                         ex) 15 + 5 = 20
+        ammoRemain -= ammoToFill;                           // 남은 탄약에서 채운 탄약만큼 뺌         ex) 5 - 5 = 0
         state = State.Ready;
     }
 }

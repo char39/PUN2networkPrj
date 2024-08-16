@@ -40,7 +40,10 @@ public class PlayerShooter : MonoBehaviour
 
     private void UpdateUI()                 // UI 갱신
     {
-
+        if (gun != null && UIManager.instance != null)
+        {
+            UIManager.instance.AmmoTextUpdate(gun.magAmmo, gun.ammoRemain);
+        }
     }
 
 
