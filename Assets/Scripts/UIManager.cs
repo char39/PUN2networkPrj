@@ -2,29 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
-    public Transform hudUI;
+    public Transform hud_Canvas;
+    private GameObject gameOverUI;
     private Text ammoText;
+    private Text scoreText;
+    private Text waveText;
 
     void Awake()
     {
         if (instance == null)
             instance = this;
-        else
+        else if (instance != this)
             Destroy(gameObject);
-        ammoText = hudUI.GetChild(0).GetChild(0).GetComponent<Text>();
-    }
-
-    void Update()
-    {
-
+        gameOverUI = hud_Canvas.GetChild(3).gameObject;
+        ammoText = hud_Canvas.GetChild(0).GetChild(0).GetComponent<Text>();
+        scoreText = hud_Canvas.GetChild(1).GetComponent<Text>();
+        waveText = hud_Canvas.GetChild(2).GetComponent<Text>();
     }
 
     public void AmmoTextUpdate(int magAmmo, int ammoRemain)
     {
-        ammoText.text = $"{magAmmo}/{ammoRemain}";
+        ammoText.text = $"{magAmmo}/{ammoRemain}";                      // ammoText 텍스트 갱신
+    }
+
+    public void ScoreTextUpdate(int newScore)
+    {
+        scoreText.text = $"Score : {newScore}";                         // scoreText 텍스트 갱신
+    }
+
+    public void WaveTextUpdate(int wave, int count)
+    {
+        waveText.text = $"Wave : {wave}\nEnemy : {count}";              // waveText 텍스트 갱신
+    }
+
+    public void SetActiveGameOverUI(bool active)
+    {
+        gameOverUI.SetActive(active);                                   // 게임오버 UI 활성화
+    }
+
+    public void GameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);     // 현재 씬 재시작
     }
 }

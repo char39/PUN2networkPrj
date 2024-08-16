@@ -4,11 +4,6 @@ using Interface;
 using UnityEngine;
 using UnityEngine.UI;
 
-public struct HashValue_P
-{
-    public const string DieTrigger = "Die";
-}
-
 public class PlayerHP : LivingEntity
 {
     public Slider HPSlider;                 // 체력을 표시할 슬라이더
@@ -57,7 +52,7 @@ public class PlayerHP : LivingEntity
         base.Die();
         HPSlider.gameObject.SetActive(false);
         playerAudioSource.PlayOneShot(deathClip, 1.0f);
-        playerAni.SetTrigger(HashValue_P.DieTrigger);
+        playerAni.SetTrigger(HashID_P.DieTrigger);
         playerMovement.enabled = false;
         playerShooter.enabled = false;
     }
