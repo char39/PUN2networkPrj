@@ -15,7 +15,7 @@ public class EnemyHP : LivingEntity
     public AudioClip deathClip;                 // 죽는 소리
     private AudioSource enemyAudioSource;
     private Animator enemyAni;
-    internal float damage = 20f;                // 공격력
+    internal float damage;                      // 공격력
     internal float timeBetAttack = 0.5f;        // 공격 간격
     private float lastAttackTime = 0.0f;        // 마지막 공격 시점
     private bool hasTarget                  // 프로퍼티

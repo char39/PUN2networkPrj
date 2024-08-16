@@ -6,7 +6,19 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
+    private static UIManager instance_;
+    public static UIManager instance
+    {
+        get
+        {
+            if (instance_ == null)
+            {
+                instance_ = FindObjectOfType<UIManager>();
+            }
+            return instance_;
+        }
+        set { instance_ = value; }
+    }
     public Transform hud_Canvas;
     private GameObject gameOverUI;
     private Text ammoText;
@@ -15,9 +27,9 @@ public class UIManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
+        if (instance_ == null)
+            instance_ = this;
+        else if (instance_ != this)
             Destroy(gameObject);
         gameOverUI = hud_Canvas.GetChild(3).gameObject;
         ammoText = hud_Canvas.GetChild(0).GetChild(0).GetComponent<Text>();
@@ -37,7 +49,7 @@ public class UIManager : MonoBehaviour
 
     public void WaveTextUpdate(int wave, int count)
     {
-        waveText.text = $"Wave : {wave}\nEnemy : {count}";              // waveText 텍스트 갱신
+        waveText.text = $"Wave : {wave}\nEnemy Left : {count}";              // waveText 텍스트 갱신
     }
 
     public void SetActiveGameOverUI(bool active)
@@ -47,6 +59,7 @@ public class UIManager : MonoBehaviour
 
     public void GameRestart()
     {
+        GameManager.instance.isGameover = false;                        // 게임오버 상태 해제
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);     // 현재 씬 재시작
     }
 }
