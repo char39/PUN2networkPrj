@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour
 
     public void GameRestart()
     {
-        GameManager.instance.isGameover = false;                        // 게임오버 상태 해제
+        //GameManager.instance.isGameover = false;                        // 게임오버 상태 해제
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);     // 현재 씬 재시작
     }
 }

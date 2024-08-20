@@ -71,6 +71,7 @@ public class PlayerHP : LivingEntity
             transform.position = randomSpawnPos;                        // 플레이어 위치 변경
         }
         gameObject.SetActive(false);
+        UIManager.instance.GameRestart();
         gameObject.SetActive(true);
     }
 
