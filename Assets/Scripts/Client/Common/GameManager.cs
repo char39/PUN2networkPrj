@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     private static GameManager instance_;
     public static GameManager instance
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
         }
         set { instance_ = value; }
     }
+
+    public GameObject playerPrefab;
     public bool isGameover = false;
     private int score = 0;
 
@@ -26,6 +29,10 @@ public class GameManager : MonoBehaviour
             instance_ = this;
         else if (instance_ != this)
             Destroy(gameObject);
+        
+        Vector3 randomSpawnPos = Random.insideUnitSphere * 5f;
+        randomSpawnPos.y = 0f;
+        PhotonNetwork.Instantiate(playerPrefab.name, randomSpawnPos, Quaternion.identity);
     }
 
     void Start()
@@ -44,5 +51,18 @@ public class GameManager : MonoBehaviour
     {
         isGameover = true;
         UIManager.instance.SetActiveGameOverUI(isGameover);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(score);
+        }
+        else if (stream.IsReading)
+        {
+            score = (int)stream.ReceiveNext();
+            UIManager.instance.ScoreTextUpdate(score);
+        }
     }
 }

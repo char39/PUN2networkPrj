@@ -36,7 +36,7 @@ namespace ItemPack
             if (shooter != null && shooter.gun != null)
             {
                 //shooter.gun.ammoRemain += ammo;
-                shooter.gun.photonView.RPC("AddAmmo", RpcTarget.All, ammo);
+                shooter.gun.photonView.RPC(nameof(shooter.gun.AddAmmo), RpcTarget.All, ammo);
             }
             //Destroy(gameObject);
             PhotonNetwork.Destroy(gameObject);

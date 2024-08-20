@@ -336,9 +336,9 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 2
+  Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 2
+  observableSearch: 0
   ObservedComponents:
   - {fileID: -4037248208162453065}
   - {fileID: 4098044879877856243}
@@ -383,7 +383,7 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: HasTarget
   m_SynchronizeLayers:
-  - SynchronizeType: 0
+  - SynchronizeType: 2
     LayerIndex: 0
 --- !u!4 &1186722246924592951 stripped
 Transform:

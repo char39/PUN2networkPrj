@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using ExitGames.Client.Photon;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviourPun, IPunObservable
 {
     public EnemyHP enemyPrefab;
     public Transform[] spawnPoints;
@@ -16,19 +18,31 @@ public class EnemySpawner : MonoBehaviour
     
     public Color strongEnemyColor = Color.red;
     private List<EnemyHP> enemies = new();
+    private int enemyCount = 0;
     private int wave = 0;
+
+    void Awake()
+    {
+        //PhotonPeer.RegisterType(typeof(Color), 128, ColorSerialization.SerializeColor, ColorSerialization.DeserializeColor);
+    }
 
     void Update()
     {
-        if (GameManager.instance != null && GameManager.instance.isGameover) return;
-        if (enemies.Count <= 0)
-            SpawnWave();
-        UIUpdate();
+        if (PhotonNetwork.IsMasterClient)
+        {
+            if (GameManager.instance != null && GameManager.instance.isGameover) return;
+            if (enemies.Count <= 0)
+                SpawnWave();
+            UIUpdate();
+        }
     }
 
     private void UIUpdate()
     {
-        UIManager.instance.WaveTextUpdate(wave, enemies.Count);
+        if (PhotonNetwork.IsMasterClient)                           // 마스터 클라이언트일 때
+            UIManager.instance.WaveTextUpdate(wave, enemies.Count);     // wave, enemies.Count를 UIManager에 전달. enemies.Count는 enemies의 개수
+        else                                                        // 마스터 클라이언트가 아닐 때
+            UIManager.instance.WaveTextUpdate(wave, enemyCount);        // wave, enemyCount를 UIManager에 전달. enemyCount는 마스터 클라이언트의 enemies.Count
     }
 
     private void SpawnWave()
@@ -50,12 +64,36 @@ public class EnemySpawner : MonoBehaviour
         Color skinColor = Color.Lerp(Color.white, strongEnemyColor, intencity);                 // skinColor를 intencity에 따라 비율을 조절
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];                // spawnPoint를 랜덤으로 선택
 
-        EnemyHP enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);     // enemyPrefab을 spawnPoint에 생성
-        enemy.Setup(hp, damage, speed, skinColor);                                              // enemy의 hp, damage, speed, skinColor 설정
-        enemies.Add(enemy);                                                                     // enemies에 enemy 추가
+        GameObject enemyObj = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.position, spawnPoint.rotation);     // enemyPrefab을 spawnPoint에 생성
+        EnemyHP enemy = enemyObj.GetComponent<EnemyHP>();                                                                // enemy를 EnemyHP로 형변환
 
+        //enemy.Setup(hp, damage, speed, skinColor);                                            // enemy의 hp, damage, speed, skinColor 설정
+        photonView.RPC("Setup", RpcTarget.All, hp, damage, speed, skinColor);                   // 모든 클라이언트에게 enemy의 hp, damage, speed, skinColor 설정
+
+        enemies.Add(enemy);                                                                     // enemies에 enemy 추가
         enemy.OnDeath += () => enemies.Remove(enemy);                                           // enemy의 OnDeath 이벤트에 enemies에서 enemy 제거
-        enemy.OnDeath += () => Destroy(enemy.gameObject, 10f);                                  // enemy의 OnDeath 이벤트에 10초 후 enemy 제거
+        enemy.OnDeath += () => StartCoroutine(DestroyAfter(enemyObj, 3f));                      // enemy의 OnDeath 이벤트에 3초 후에 enemyObj 제거
         enemy.OnDeath += () => GameManager.instance.AddScore(100);                              // enemy의 OnDeath 이벤트에 100점 추가
+    }
+
+    private IEnumerator DestroyAfter(GameObject target, float delay)                // target을 delay 후에 제거
+    {
+        yield return new WaitForSeconds(delay);
+        if (target != null)
+            PhotonNetwork.Destroy(target);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)                       // 데이터를 보낼 때
+        {
+            stream.SendNext(enemies.Count);             // enemies의 개수를 전송.   1번째로 전송
+            stream.SendNext(wave);                      // wave를 전송.            2번째로 전송
+        }
+        else if (stream.IsReading)                  // 데이터를 받을 때
+        {
+            enemyCount = (int)stream.ReceiveNext();     // enemyCount를 전송받은 데이터로 설정.     1번째로 전송된 데이터를 받음
+            wave = (int)stream.ReceiveNext();           // wave를 전송받은 데이터로 설정.           2번째로 전송된 데이터를 받음
+        }
     }
 }

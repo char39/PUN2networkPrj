@@ -594,6 +594,7 @@ GameObject:
   m_Component:
   - component: {fileID: 660072601}
   - component: {fileID: 660072602}
+  - component: {fileID: 660072603}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -635,6 +636,29 @@ MonoBehaviour:
   - {fileID: 1015188483}
   - {fileID: 1740312504}
   strongEnemyColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &660072603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 660072600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 2
+  OwnershipTransfer: 0
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 0}
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &689706156
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,6 +669,7 @@ GameObject:
   m_Component:
   - component: {fileID: 689706158}
   - component: {fileID: 689706157}
+  - component: {fileID: 689706159}
   m_Layer: 0
   m_Name: ItemSpawner
   m_TagString: Untagged
@@ -684,6 +709,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &689706159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689706156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  observableSearch: 0
+  ObservedComponents:
+  - {fileID: 0}
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1001 &708139771
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -803,6 +851,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638c508a4bc2d49a380772d58dcc044c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 602072594538707178, guid: e96a47222a9b343bb85595a26bc14e5b, type: 3}
   isGameover: 0
 --- !u!82 &1045356660
 AudioSource:
