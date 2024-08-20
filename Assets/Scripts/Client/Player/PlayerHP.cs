@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Interface;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class PlayerHP : LivingEntity
 {
@@ -33,6 +34,7 @@ public class PlayerHP : LivingEntity
         playerShooter.enabled = true;
     }
 
+    [PunRPC]
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
         if (!Dead)
@@ -41,6 +43,7 @@ public class PlayerHP : LivingEntity
         HPSlider.value = HP;
     }
 
+    [PunRPC]
     public override void RestoreHP(float newHP)
     {
         base.RestoreHP(newHP);
@@ -55,6 +58,19 @@ public class PlayerHP : LivingEntity
         playerAni.SetTrigger(HashID_P.DieTrigger);
         playerMovement.enabled = false;
         playerShooter.enabled = false;
+        Invoke(nameof(ReSpawn), 5f);
+    }
+
+    public void ReSpawn()
+    {
+        if (photonView.IsMine)
+        {
+            Vector3 randomSpawnPos = Random.insideUnitSphere * 5f;      // 반지름 5f의 구 안에서 랜덤한 위치
+            randomSpawnPos.y = 0f;                                      // y값을 0으로 설정
+            transform.position = randomSpawnPos;                        // 플레이어 위치 변경
+        }
+        gameObject.SetActive(false);
+        gameObject.SetActive(true);
     }
 
     private void OnTriggerEnter(Collider other)     // 아이템과 충돌한 경우
@@ -64,7 +80,10 @@ public class PlayerHP : LivingEntity
             other.TryGetComponent(out IItem item);
             if (item != null)
             {
-                item.Use(gameObject);
+                if (PhotonNetwork.IsMasterClient)   // 마스터 클라이언트인 경우
+                {
+                    item.Use(gameObject);           // Use() 메서드 호출
+                }
                 playerAudioSource.PlayOneShot(itemPickupClip, 1.0f);
             }
         }

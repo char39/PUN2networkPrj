@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Interface;
+using Photon.Pun;
 
-public class Gun : MonoBehaviour
+public class Gun : MonoBehaviourPun, IPunObservable
 {
     public enum State { Ready, Empty, Reloading }
     public State state { get; private set; }
@@ -61,10 +62,36 @@ public class Gun : MonoBehaviour
         else
             hitPosition = fireTr.position + fireTr.forward * fireDistance;
         StartCoroutine(ShotEffect(hitPosition));
+        photonView.RPC(nameof(ShotProcessOnServer), RpcTarget.MasterClient);
         magAmmo--;
         if (magAmmo <= 0)
             state = State.Empty;
     }
+
+    [PunRPC]
+    public void ShotProcessOnServer()
+    {
+        RaycastHit hit;
+        Vector3 hitPosition = Vector3.zero;
+        if (Physics.Raycast(fireTr.position, fireTr.forward, out hit, fireDistance))
+        {
+            IDamageable target = hit.collider.GetComponent<IDamageable>();
+            if (target != null)
+                target.OnDamage(damage, hit.point, hit.normal);
+            hitPosition = hit.point;
+        }
+        else
+            hitPosition = fireTr.position + fireTr.forward * fireDistance;
+        photonView.RPC(nameof(ShotEffectProcessOnClient), RpcTarget.All, hitPosition);
+    }
+
+    [PunRPC]
+    public void ShotEffectProcessOnClient(Vector3 hitPos)
+    {
+        StartCoroutine(ShotEffect(hitPos));
+    }
+
+
     private IEnumerator ShotEffect(Vector3 hitPosition)     // 발사 이펙트 처리
     {
         lineRenderer.enabled = true;
@@ -100,5 +127,27 @@ public class Gun : MonoBehaviour
         magAmmo += ammoToFill;                              // 탄창 채움                         ex) 15 + 5 = 20
         ammoRemain -= ammoToFill;                           // 남은 탄약에서 채운 탄약만큼 뺌         ex) 5 - 5 = 0
         state = State.Ready;
+    }
+
+    [PunRPC]
+    public void AddAmmo(int ammo)
+    {
+        ammoRemain += ammo;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)      // 동기화
+    {
+        if (stream.IsWriting)               // 송신
+        {
+            stream.SendNext(magAmmo);           // 탄창에 있는 탄약 개수
+            stream.SendNext(ammoRemain);        // 남은 탄약 개수
+            stream.SendNext(state);             // 총 상태
+        }
+        else if (stream.IsReading)          // 수신
+        {
+            magAmmo = (int)stream.ReceiveNext();        // 탄창에 있는 탄약 개수
+            ammoRemain = (int)stream.ReceiveNext();     // 남은 탄약 개수
+            state = (State)stream.ReceiveNext();        // 총 상태
+        }
     }
 }

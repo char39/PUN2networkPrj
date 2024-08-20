@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviourPun
 {
     public float moveSpeed = 5.0f;
     public float rotateSpeed = 180.0f;
@@ -23,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!photonView.IsMine) return;         // 본인(Local)의 입력만 받음. 다른 플레이어의 입력은 받지 않음.
         Move();
         Rotate();
         playerAni.SetFloat(hashMove, playerInput.move);

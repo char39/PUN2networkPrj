@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 // IK : Inverse Kinematics
 
-public class PlayerShooter : MonoBehaviour
+public class PlayerShooter : MonoBehaviourPun
 {
     private PlayerInput playerInput;    // 플레이어 입력
     private Animator playerAni;         // 플레이어 애니메이터
@@ -31,6 +32,7 @@ public class PlayerShooter : MonoBehaviour
 
     void Update()                       // void Update()
     {
+        if (!photonView.IsMine) return;             // 본인(Local)의 입력만 받음. 다른 플레이어의 입력은 받지 않음.
         if (playerInput.fire)                           // 발사 입력
             gun.Fire();                                     // 총 발사
         else if (playerInput.reload && gun.Reload())    // 재장전 입력
