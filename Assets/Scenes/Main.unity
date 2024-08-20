@@ -636,6 +636,7 @@ MonoBehaviour:
   - {fileID: 1015188483}
   - {fileID: 1740312504}
   strongEnemyColor: {r: 1, g: 0, b: 0, a: 1}
+  enemies: []
 --- !u!114 &660072603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +694,7 @@ MonoBehaviour:
   - {fileID: 1045172808418600, guid: c90bf41c504e541b98989b07b736097c, type: 3}
   - {fileID: 1838412652947266, guid: b4e7df10a580e4a1a88a79995b741816, type: 3}
   - {fileID: 1676094191218838, guid: 4229c84aca58549a586e9bb7aaae97c4, type: 3}
-  playerTr: {fileID: 0}
+  playerTr: {fileID: 602072594538931402, guid: e96a47222a9b343bb85595a26bc14e5b, type: 3}
 --- !u!4 &689706158
 Transform:
   m_ObjectHideFlags: 0

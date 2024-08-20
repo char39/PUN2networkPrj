@@ -17,13 +17,13 @@ public class EnemySpawner : MonoBehaviourPun, IPunObservable
     internal float speedMin = 0.8f;
     
     public Color strongEnemyColor = Color.red;
-    private List<EnemyHP> enemies = new();
+    public List<EnemyHP> enemies = new();
     private int enemyCount = 0;
     private int wave = 0;
 
     void Awake()
     {
-        //PhotonPeer.RegisterType(typeof(Color), 128, ColorSerialization.SerializeColor, ColorSerialization.DeserializeColor);
+        PhotonPeer.RegisterType(typeof(Color), 128, ColorSerialization.SerializeColor, ColorSerialization.DeserializeColor);
     }
 
     void Update()
@@ -68,7 +68,7 @@ public class EnemySpawner : MonoBehaviourPun, IPunObservable
         EnemyHP enemy = enemyObj.GetComponent<EnemyHP>();                                                                // enemy를 EnemyHP로 형변환
 
         //enemy.Setup(hp, damage, speed, skinColor);                                            // enemy의 hp, damage, speed, skinColor 설정
-        photonView.RPC("Setup", RpcTarget.All, hp, damage, speed, skinColor);                   // 모든 클라이언트에게 enemy의 hp, damage, speed, skinColor 설정
+        enemy.photonView.RPC("Setup", RpcTarget.All, hp, damage, speed, skinColor);                   // 모든 클라이언트에게 enemy의 hp, damage, speed, skinColor 설정
 
         enemies.Add(enemy);                                                                     // enemies에 enemy 추가
         enemy.OnDeath += () => enemies.Remove(enemy);                                           // enemy의 OnDeath 이벤트에 enemies에서 enemy 제거
