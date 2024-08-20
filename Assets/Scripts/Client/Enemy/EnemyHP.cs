@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
+using Photon.Pun;
 
 public class EnemyHP : LivingEntity
 {
@@ -39,11 +39,13 @@ public class EnemyHP : LivingEntity
 
     void Start()
     {
-        InvokeRepeating("UpdatePath", 0.01f, 0.25f);        // 0.01초 후에 0.25초 간격으로 UpdatePath() 메서드 호출
+        if (!PhotonNetwork.IsMasterClient) return;
+        InvokeRepeating(nameof(UpdatePath), 0.01f, 0.25f);        // 0.01초 후에 0.25초 간격으로 UpdatePath() 메서드 호출
     }
 
     void Update()
     {
+        if (!PhotonNetwork.IsMasterClient) return;
         enemyAni.SetBool(HashID_E.HasTarget, hasTarget);
     }
 
@@ -73,6 +75,7 @@ public class EnemyHP : LivingEntity
         }
     }
 
+    [PunRPC]
     public void Setup(float newHP, float newDamage, float newSpeed, Color skinColor)
     {
         startHP = newHP;
@@ -82,6 +85,7 @@ public class EnemyHP : LivingEntity
         enemyRenderer.material.color = skinColor;
     }
 
+    [PunRPC]
     public override void OnDamage(float damage, Vector3 hitPoint, Vector3 hitNormal)
     {
         base.OnDamage(damage, hitPoint, hitNormal);
@@ -111,6 +115,7 @@ public class EnemyHP : LivingEntity
 
     private void OnTriggerStay(Collider other)
     {
+        if (!PhotonNetwork.IsMasterClient) return;
         if (!Dead && Time.time >= lastAttackTime + timeBetAttack)
         {
             LivingEntity attackTarget = other.GetComponent<LivingEntity>();

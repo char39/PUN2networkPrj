@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Interface;
+using Photon.Pun;
 
 namespace ItemPack
 {
-    public class Item : MonoBehaviour
+    public class Item : MonoBehaviourPun
     {
         public bool ammoPack = false;
         public bool healthPack = false;
@@ -25,7 +26,7 @@ namespace ItemPack
         }
     }
 
-    public class AmmoPack : MonoBehaviour, IItem        // 탄알
+    public class AmmoPack : MonoBehaviourPun, IItem        // 탄알
     {
         private int ammo = 30;
 
@@ -34,13 +35,15 @@ namespace ItemPack
             PlayerShooter shooter = target.GetComponent<PlayerShooter>();
             if (shooter != null && shooter.gun != null)
             {
-                shooter.gun.ammoRemain += ammo;
+                //shooter.gun.ammoRemain += ammo;
+                shooter.gun.photonView.RPC("AddAmmo", RpcTarget.All, ammo);
             }
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 
-    public class HealthPack : MonoBehaviour, IItem      // 체력
+    public class HealthPack : MonoBehaviourPun, IItem      // 체력
     {
         private float health = 50f;
 
@@ -51,18 +54,19 @@ namespace ItemPack
             {
                 entity.RestoreHP(health);
             }
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 
-    public class Coin : MonoBehaviour, IItem            // 코인
+    public class Coin : MonoBehaviourPun, IItem            // 코인
     {
         private int score = 200;
 
         public void Use(GameObject target)
         {
             GameManager.instance.AddScore(score);
-            Destroy(gameObject);
+            PhotonNetwork.Destroy(gameObject);
         }
     }
 }

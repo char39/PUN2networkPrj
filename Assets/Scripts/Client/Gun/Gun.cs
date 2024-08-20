@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Interface;
+using ItemPack;
 using Photon.Pun;
 
 public class Gun : MonoBehaviourPun, IPunObservable
